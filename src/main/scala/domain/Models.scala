@@ -1,7 +1,7 @@
 package org.anaradedoros
 package domain
 
-import org.anaradedoros.dsl.DSL.CronBuilder
+import dsl.DSL.CronBuilder
 
 import scala.collection.immutable.NumericRange
 
@@ -101,7 +101,14 @@ object Models :
                           dow: CronExpr[Int]
                         ):
     override def toString: String = CronRender.renderJob(this)
+    def explanation : String = CronRender.explain(List(m, h, dom, dow))
 
+
+  object CronJobExpr:
+    def build(init: CronBuilder => Unit): CronJobExpr =
+      val b = CronBuilder()
+      init(b)
+      b.build()
 
   // -----------------------------------------------------------
   // Rendering
@@ -115,12 +122,19 @@ object Models :
       case ListExpr(vs) => vs.map(_.value).mkString(",")
       case Step(f, s) => s"${f.value}/$s"
 
+    def explain[A](expr: List[CronExpr[A]]): String =
+      val explanation = for{
+        arg <- expr
+      } yield arg match
+        case At(v) => s"at ${v.value.toString}"
+        case Every(step, _) => s"every/$step"
+        case Range(f, t) => s"from ${f.value} to ${t.value}"
+        case ListExpr(vs) => vs.map(_.value).mkString(",")
+        case Step(f, s) => s"from ${f.value} with a step of $s"
+      explanation.mkString("minute | hour | dom | dow\n", " | ", ".")
+
     def renderJob(job: CronJobExpr): String =
+      //at is used indiscriminately, will fix later
       s"${render(job.m)} ${render(job.h)} ${render(job.dom)} ${render(job.dow)}"
 
 
-  object CronJobExpr:
-    def build(init: CronBuilder => Unit): CronJobExpr =
-      val b = CronBuilder()
-      init(b)
-      b.build()

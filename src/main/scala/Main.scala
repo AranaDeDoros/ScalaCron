@@ -13,6 +13,8 @@ object Main {
       c.dow = 1.dow
     }
 
+    println(job.explanation)
+
     println(job)
 
   }
