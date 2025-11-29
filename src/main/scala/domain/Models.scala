@@ -126,7 +126,7 @@ object Models :
       val explanation = for{
         arg <- expr
       } yield arg match
-        case At(v) => s"at ${v.value.toString}"
+        case At(v) => s"${v.value.toString}"
         case Every(step, _) => s"every/$step"
         case Range(f, t) => s"from ${f.value} to ${t.value}"
         case ListExpr(vs) => vs.map(_.value).mkString(",")
@@ -134,7 +134,6 @@ object Models :
       explanation.mkString("minute | hour | dom | dow\n", " | ", ".")
 
     def renderJob(job: CronJobExpr): String =
-      //at is used indiscriminately, will fix later
       s"${render(job.m)} ${render(job.h)} ${render(job.dom)} ${render(job.dow)}"
 
 
