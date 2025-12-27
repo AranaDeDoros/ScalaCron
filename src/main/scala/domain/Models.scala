@@ -125,26 +125,36 @@ object Models :
       case ListExpr(vs) => vs.map(_.value).mkString(",")
       case Step(f, s) => s"${f.value}/$s"
 
-    def schedule[A](expr: List[CronExpr[A]]): String =
+    def schedule[A](expr: List[CronExpr[A]])(using integral: Integral[A]): String =
+      import integral.mkNumericOps
       val labels = List("Minute", "Hour", "Day of Month", "Day of Week")
-
+      val dayNames = List("Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday")
       val lines = labels.zip(expr).map { (label, e) =>
         val desc = e match
-          case At(v) => s"at ${v.value}"
-          case Every(s, _) => s"every $s"
+          case At(v) => label match
+            case "Day of Week" => dayNames((v.value % integral.fromInt(7)).toInt)
+            case _ => s"at ${v.value}"
+          case Every(s, _) =>
+            val unit = label match
+              case "Minute" => if s == 1 then "minute" else "minutes"
+              case "Hour" => if s == 1 then "hour" else "hours"
+              case "Day of Month" => if s == 1 then "day" else "days"
+              case "Day of Week" => if s == 1 then "day" else "days"
+            s"every $s $unit"
           case Range(f, t) => s"from ${f.value} to ${t.value}"
-          case ListExpr(vs) => s"at ${vs.map(_.value).mkString(", ")}"
+          case ListExpr(vs) =>
+            label match
+              case "Day of Week" => vs.map(v => dayNames((v.value % integral.fromInt(7)).toInt)).mkString(", ")
+              case _ => vs.map(_.value).mkString(", ")
           case Step(f, s) => s"starting at ${f.value}, every $s"
-
         f"- $label%-13s : $desc"
       }
-
       lines.mkString("\n")
 
     def renderJob(job: CronJobExpr): String =
-      val cron = s"${render(job.m)} ${render(job.h)} ${render(job.dom)} ${render(job.dow)}"
-      job.command match
-      case Some(cmd) => s"$cron ${cmd.value}"
-      case None      => cron
+          val cron = s"${render(job.m)} ${render(job.h)} ${render(job.dom)} ${render(job.dow)}"
+          job.command match
+          case Some(cmd) => s"$cron ${cmd.value}"
+          case None      => cron
 
 

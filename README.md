@@ -20,13 +20,14 @@ println(job?)//same as job.schedule
 println(job) //whole expression as string
 ```
 ```text
-- Minute        : every 5
+- Minute        : every 5 minutes
 - Hour          : at 12
 - Day of Month  : at 1
-- Day of Week   : at 1
+- Day of Week   : Monday
 */5 12 1 1 /usr/bin/backup.sh
 ```
 
 ## TODO ##
-1. [ ] Renable application of applyValidated
+1. [ ] Re-enable application of applyValidated
+2. [ ] Pretty token explanation.
  
