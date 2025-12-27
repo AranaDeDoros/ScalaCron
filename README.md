@@ -1,4 +1,4 @@
-## Cronjob DSL test
+## ScalaCron
 
 An attempt at making a cronjob domain second language. In order to increase the flexibility of this thing, I had to 
 temporarily use **unsafe** to build the expressions present derived from [CronField](src/main/scala/domain/Models.scala), 
@@ -7,17 +7,24 @@ validating option.
 
 **Usage**
 ```scala
-  import CronDSL.*
+import dsl.DSL.CronDSL.*
 
-    val job = CronJobExpr.build { c =>
-      c.m = * / 5
-      c.h = 12.h
-      c.dom = 1.dom
-      c.dow = 1.dow
-    }
+val job = CronJobExpr.build { c =>
+  c.m = * / 5
+  c.h = 12.h
+  c.dom = 1.dom
+  c.dow = 1.dow
+} >> ("/usr/bin/backup.sh")
 
-    println(job) //*/5 12 1 1
-
+println(job?)//same as job.schedule
+println(job) //whole expression as string
+```
+```text
+- Minute        : every 5
+- Hour          : at 12
+- Day of Month  : at 1
+- Day of Week   : at 1
+*/5 12 1 1 /usr/bin/backup.sh
 ```
 
 ## TODO ##

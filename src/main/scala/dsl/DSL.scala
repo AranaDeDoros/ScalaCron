@@ -1,9 +1,8 @@
-package org.anaradedoros
+package org.anaradedoros.scalacron
 package dsl
 
 import domain.Models.*
 
-object DSL :
   // -----------------------------------------------------------
   // DSL
   // -----------------------------------------------------------
@@ -34,3 +33,9 @@ object DSL :
     def build(): CronJobExpr =
       CronJobExpr(m, h, dom, dow)
 
+  extension (job: CronJobExpr)
+    def run(cmd: String): CronJobExpr =
+      job.withCommand(cmd)
+    infix def >>(cmd: String): CronJobExpr =
+      job.withCommand(cmd)
+    def ? : String = job.schedule

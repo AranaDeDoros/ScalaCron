@@ -1,7 +1,7 @@
-package org.anaradedoros
+package org.anaradedoros.scalacron
 package domain
 
-import dsl.DSL.CronBuilder
+import dsl.CronBuilder
 
 import scala.collection.immutable.NumericRange
 
@@ -94,15 +94,18 @@ object Models :
   // -----------------------------------------------------------
   // CronJob AST
   // -----------------------------------------------------------
+  final case class CronCommand(value: String)
   case class CronJobExpr(
                           m: CronExpr[Int],
                           h: CronExpr[Int],
                           dom: CronExpr[Int],
-                          dow: CronExpr[Int]
+                          dow: CronExpr[Int],
+                          command: Option[CronCommand] = None
                         ):
     override def toString: String = CronRender.renderJob(this)
-    def explanation : String = CronRender.explain(List(m, h, dom, dow))
-
+    def schedule : String = CronRender.schedule(List(m, h, dom, dow))
+    def withCommand(cmd: String): CronJobExpr =
+      copy(command = Some(CronCommand(cmd)))
 
   object CronJobExpr:
     def build(init: CronBuilder => Unit): CronJobExpr =
@@ -113,7 +116,7 @@ object Models :
   // -----------------------------------------------------------
   // Rendering
   // -----------------------------------------------------------
-  private object CronRender:
+  object CronRender:
 
     private def render[A](expr: CronExpr[A]): String = expr match
       case At(v) => v.value.toString
@@ -122,18 +125,26 @@ object Models :
       case ListExpr(vs) => vs.map(_.value).mkString(",")
       case Step(f, s) => s"${f.value}/$s"
 
-    def explain[A](expr: List[CronExpr[A]]): String =
-      val explanation = for{
-        arg <- expr
-      } yield arg match
-        case At(v) => s"${v.value.toString}"
-        case Every(step, _) => s"every/$step"
-        case Range(f, t) => s"from ${f.value} to ${t.value}"
-        case ListExpr(vs) => vs.map(_.value).mkString(",")
-        case Step(f, s) => s"from ${f.value} with a step of $s"
-      explanation.mkString("minute | hour | dom | dow\n", " | ", ".")
+    def schedule[A](expr: List[CronExpr[A]]): String =
+      val labels = List("Minute", "Hour", "Day of Month", "Day of Week")
+
+      val lines = labels.zip(expr).map { (label, e) =>
+        val desc = e match
+          case At(v) => s"at ${v.value}"
+          case Every(s, _) => s"every $s"
+          case Range(f, t) => s"from ${f.value} to ${t.value}"
+          case ListExpr(vs) => s"at ${vs.map(_.value).mkString(", ")}"
+          case Step(f, s) => s"starting at ${f.value}, every $s"
+
+        f"- $label%-13s : $desc"
+      }
+
+      lines.mkString("\n")
 
     def renderJob(job: CronJobExpr): String =
-      s"${render(job.m)} ${render(job.h)} ${render(job.dom)} ${render(job.dow)}"
+      val cron = s"${render(job.m)} ${render(job.h)} ${render(job.dom)} ${render(job.dow)}"
+      job.command match
+      case Some(cmd) => s"$cron ${cmd.value}"
+      case None      => cron
 
 
