@@ -1,7 +1,7 @@
 package org.anaradedoros.scalacron
 package domain
 
-import dsl.CronBuilder
+import dsl.CronDSL.CronBuilder
 
 import scala.collection.immutable.NumericRange
 
