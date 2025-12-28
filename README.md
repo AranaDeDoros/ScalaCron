@@ -37,5 +37,5 @@ println(job2) //whole expression as string
 
 ## TODO ##
 1. [ ] Re-enable application of applyValidated
-2. [ ] Pretty token explanation.
+2. [x] Pretty token explanation.
  
