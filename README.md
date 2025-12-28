@@ -1,7 +1,10 @@
 ## ScalaCron
+<p align="center"><img height="400" alt="scalacron_" src="https://github.com/user-attachments/assets/f42f15ed-ca12-4cc5-a1ac-0d4098db7736" />
+</p>
+<p align="center">A primitive DSL to generate cronjobs expressions on demand.</p>
 
-An attempt at making a cronjob domain second language. **In order to increase flexibility expressions are built using **unsafe** , 
-instead of **_applyValidated_** which would be the proper method.** 
+My first attempt at making a cronjob domain specific language. **In order to increase flexibility expressions are built using **unsafe** , 
+instead of **_applyValidated_** which would be the proper method. This is temporary.** 
 
 **Usage**
 ```scala
