@@ -1,23 +1,28 @@
 ## ScalaCron
 
-An attempt at making a cronjob domain second language. In order to increase the flexibility of this thing, I had to 
-temporarily use **unsafe** to build the expressions present derived from [CronField](src/main/scala/domain/Models.scala), 
-instead of **applyValidated** which is the proper,
-validating option. 
+An attempt at making a cronjob domain second language. **In order to increase flexibility expressions are built using **unsafe** , 
+instead of **_applyValidated_** which would be the proper method.** 
 
 **Usage**
 ```scala
-import dsl.DSL.CronDSL.*
+import domain.Models.*
+import domain.Models.Minute.given
+import dsl.CronDSL.*
+import java.time.DayOfWeek
+import scala.language.postfixOps
 
-val job = CronJobExpr.build { c =>
-  c.m = * / 5
-  c.h = 12.h
-  c.dom = 1.dom
-  c.dow = 1.dow
-} >> ("/usr/bin/backup.sh")
+val job2 = cron { c =>
+  c.minute(* / 5)
+  c.hour(12.h)
+  c.dom(1.dom)
+  c.dow(DayOfWeek.FRIDAY)
+} >> "/usr/bin/backup.sh"
 
-println(job?)//same as job.schedule
-println(job) //whole expression as string
+println(job2?) //same as job.schedule
+println(job2) //whole expression as string
+
+//still redefining this thing
+
 ```
 ```text
 - Minute        : every 5 minutes
