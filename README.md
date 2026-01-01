@@ -13,8 +13,6 @@ import dsl.CronDSL.{to, *}
 import Days.*
 import scala.language.postfixOps
 
-
-import scala.language.postfixOps
 object Main :
   def main(args: Array[String]): Unit =
 
