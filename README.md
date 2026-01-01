@@ -1,6 +1,9 @@
 ## ScalaCron
+<p align="center"><img height="400" alt="scalacron_" src="https://github.com/user-attachments/assets/f42f15ed-ca12-4cc5-a1ac-0d4098db7736" />
+</p>
 
 My first embedded DSL experiment. ScalaCron can generate Cronjob expressions programmatically.
+
 
 **Usage**
 ```scala
@@ -33,6 +36,3 @@ object Main :
 - Day of Week   : Monday
 */5 12 1 1 /usr/bin/backup.sh
 ```
-
-
- 
