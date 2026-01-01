@@ -35,10 +35,6 @@ jobs:
       - name: Run tests
         run: sbt test
 
-      - name: Upload Pages artifact
-        uses: actions/upload-pages-artifact@v3
-        with:
-          path: target/scala-3.3.6/api
 
   release:
     name: Build & Publish Release
