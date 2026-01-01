@@ -4,19 +4,19 @@ package domain
 import dsl.CronDSL.CronBuilder
 
 import scala.collection.immutable.NumericRange
-
+import java.time.{DayOfWeek => Weekday}
 object Models :
 
   // -----------------------------------------------------------
   // Errors
   // -----------------------------------------------------------
   sealed trait CronError
-  private final case class RangeError[A](
-                                          value: A,
-                                          validRange: NumericRange[A],
-                                          pf: PartialFunction[A, Boolean]
+  final case class InvalidRange[A](
+                                          start: A,
+                                          end:A
                                         ) extends CronError
-
+  final case class InvalidStep[A](value:A) extends CronError
+  final case class EmptyList[A](list: List[CronValue[A]]) extends CronError
 
   // -----------------------------------------------------------
   // Cron Value 
@@ -42,7 +42,7 @@ object Models :
       if range.contains(value) && pf.isDefinedAt(value) && pf(value) then
         Right(At(build(value)))
       else
-        Left(RangeError(value, range, pf))
+        Left(InvalidRange(value, range.end))
 
     final def unsafe(value: A): CronValue[A] =
       build(value)
@@ -112,6 +112,19 @@ object Models :
       val b = CronBuilder()
       init(b)
       b.build()
+
+  // -----------------------------------------------------------
+  // Day Of Week Wrapped Values
+  // -----------------------------------------------------------
+  object Days {
+    val Monday = Weekday.MONDAY
+    val Tuesday = Weekday.TUESDAY
+    val Wednesday = Weekday.WEDNESDAY
+    val Thursday = Weekday.THURSDAY
+    val Friday = Weekday.FRIDAY
+    val Saturday = Weekday.SATURDAY
+    val Sunday = Weekday.SUNDAY
+  }
 
   // -----------------------------------------------------------
   // Rendering
