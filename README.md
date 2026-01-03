@@ -31,6 +31,6 @@ object Main :
 - Minute        : every 5 minutes
 - Hour          : at 12
 - Day of Month  : at 1
-- Day of Week   : Monday
+- Day of Week   : Friday
 */5 12 1 1 /usr/bin/backup.sh
 ```
