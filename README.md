@@ -18,7 +18,7 @@ object Main :
 
   val job2 = cron { c =>
     c.minute(* / 5)
-    c.hour(9.h to 17.h)
+    c.hour(2.h)
     c.dom(1.dom)
     c.dow(Friday)
   } >> "/usr/bin/backup.sh"
@@ -29,7 +29,7 @@ object Main :
 ```
 ```text
 - Minute        : every 5 minutes
-- Hour          : at 12
+- Hour          : at 2
 - Day of Month  : at 1
 - Day of Week   : Friday
 */5 12 1 1 /usr/bin/backup.sh
