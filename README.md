@@ -32,5 +32,5 @@ object Main :
 - Hour          : at 2
 - Day of Month  : at 1
 - Day of Week   : Friday
-*/5 12 1 1 /usr/bin/backup.sh
+*/5 2 1 5 /usr/bin/backup.sh
 ```
